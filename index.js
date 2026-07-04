@@ -24,7 +24,7 @@ try {
 
 try {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.cert(serviceAccount),
     projectId: 'viky-nail-studio'
   });
   console.log('✓ Firebase initialized successfully');
