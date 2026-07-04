@@ -36,7 +36,11 @@ try {
 const db = getFirestore();
 
 // Initialize WhatsApp client
-const client = new Client({ authStrategy: new LocalAuth() });
+const clientOptions = { authStrategy: new LocalAuth() };
+if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+  clientOptions.puppeteer = { args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: process.env.PUPPETEER_EXECUTABLE_PATH };
+}
+const client = new Client(clientOptions);
 
 client.on('ready', () => {
   console.log('✅ WhatsApp client is ready!');
