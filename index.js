@@ -1,10 +1,15 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const admin = require('firebase-admin');
 const cron = require('node-cron');
-require('dotenv').config();
 
 // Initialize Firebase
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+let serviceAccount;
+try {
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+} catch (e) {
+  console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', e.message);
+  process.exit(1);
+}
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   projectId: 'viky-nail-studio'
