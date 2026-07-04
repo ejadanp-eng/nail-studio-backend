@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: nail-studio-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: FIREBASE_SERVICE_ACCOUNT
+        scope: build,runtime
