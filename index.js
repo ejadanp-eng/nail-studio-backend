@@ -20,17 +20,16 @@ try {
   process.exit(1);
 }
 
-if (!admin.credential) {
-  console.error('✗ firebase-admin module not loaded correctly');
+try {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    projectId: 'viky-nail-studio'
+  });
+  console.log('✓ Firebase initialized successfully');
+} catch (e) {
+  console.error('✗ Error initializing Firebase:', e.message);
   process.exit(1);
 }
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  projectId: 'viky-nail-studio'
-});
-
-console.log('✓ Firebase initialized successfully');
 const db = admin.firestore();
 
 // Initialize WhatsApp client
