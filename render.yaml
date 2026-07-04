@@ -3,11 +3,11 @@ services:
     name: nail-studio-backend
     runtime: node
     plan: free
-    buildCommand: apt-get update && apt-get install -y chromium && npm install
+    buildCommand: npm install && npx puppeteer browsers install chrome
     startCommand: node index.js
     envVars:
       - key: FIREBASE_SERVICE_ACCOUNT
         scope: build,runtime
-      - key: PUPPETEER_EXECUTABLE_PATH
-        value: /usr/bin/chromium
-        scope: runtime
+      - key: PUPPETEER_CACHE_DIR
+        value: /opt/render/project/src/.cache/puppeteer
+        scope: build,runtime

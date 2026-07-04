@@ -36,9 +36,14 @@ try {
 const db = getFirestore();
 
 // Initialize WhatsApp client
-const clientOptions = { authStrategy: new LocalAuth() };
+const clientOptions = {
+  authStrategy: new LocalAuth(),
+  puppeteer: {
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  }
+};
 if (process.env.PUPPETEER_EXECUTABLE_PATH) {
-  clientOptions.puppeteer = { args: ['--no-sandbox', '--disable-setuid-sandbox'], executablePath: process.env.PUPPETEER_EXECUTABLE_PATH };
+  clientOptions.puppeteer.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
 }
 const client = new Client(clientOptions);
 
