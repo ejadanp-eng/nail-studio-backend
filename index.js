@@ -5,6 +5,8 @@ const cron = require('node-cron');
 // Initialize Firebase
 console.log('Starting Firebase initialization...');
 console.log('FIREBASE_SERVICE_ACCOUNT env var exists:', !!process.env.FIREBASE_SERVICE_ACCOUNT);
+console.log('admin module keys:', Object.keys(admin).slice(0, 10));
+console.log('admin.credential type:', typeof admin.credential);
 
 let serviceAccount;
 try {
