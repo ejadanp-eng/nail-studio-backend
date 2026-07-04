@@ -3,17 +3,34 @@ const admin = require('firebase-admin');
 const cron = require('node-cron');
 
 // Initialize Firebase
+console.log('Starting Firebase initialization...');
+console.log('FIREBASE_SERVICE_ACCOUNT env var exists:', !!process.env.FIREBASE_SERVICE_ACCOUNT);
+
 let serviceAccount;
 try {
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+  const rawEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!rawEnv) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable not found');
+  }
+  serviceAccount = JSON.parse(rawEnv);
+  console.log('✓ Firebase service account parsed successfully');
+  console.log('✓ Project ID:', serviceAccount.project_id);
 } catch (e) {
-  console.error('Error parsing FIREBASE_SERVICE_ACCOUNT:', e.message);
+  console.error('✗ Error parsing FIREBASE_SERVICE_ACCOUNT:', e.message);
   process.exit(1);
 }
+
+if (!admin.credential) {
+  console.error('✗ firebase-admin module not loaded correctly');
+  process.exit(1);
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   projectId: 'viky-nail-studio'
 });
+
+console.log('✓ Firebase initialized successfully');
 const db = admin.firestore();
 
 // Initialize WhatsApp client
