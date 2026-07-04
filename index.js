@@ -1,5 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const admin = require('firebase-admin');
+const { getFirestore } = require('firebase-admin/firestore');
 const cron = require('node-cron');
 
 // Initialize Firebase
@@ -32,7 +33,7 @@ try {
   console.error('✗ Error initializing Firebase:', e.message);
   process.exit(1);
 }
-const db = admin.firestore();
+const db = getFirestore();
 
 // Initialize WhatsApp client
 const client = new Client({ authStrategy: new LocalAuth() });
