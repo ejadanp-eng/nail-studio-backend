@@ -47,6 +47,12 @@ const clientOptions = {
 console.log('Chrome executable path:', puppeteer.executablePath());
 const client = new Client(clientOptions);
 
+const qrcode = require('qrcode-terminal');
+client.on('qr', (qr) => {
+  console.log('📱 Scan this QR code with WhatsApp:');
+  qrcode.generate(qr, { small: true });
+});
+
 client.on('ready', () => {
   console.log('✅ WhatsApp client is ready!');
   startReminders();

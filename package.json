@@ -16,6 +16,7 @@
     "firebase-admin": "^14.1.0",
     "node-cron": "^4.5.0",
     "puppeteer": "24.38.0",
+    "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.34.7"
   }
 }
