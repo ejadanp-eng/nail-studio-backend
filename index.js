@@ -48,13 +48,24 @@ console.log('Chrome executable path:', puppeteer.executablePath());
 const client = new Client(clientOptions);
 
 const qrcode = require('qrcode-terminal');
-client.on('qr', (qr) => {
-  console.log('📱 Scan this QR code with WhatsApp:');
+const QRCode = require('qrcode');
+let latestQrDataUrl = null;
+let whatsappReady = false;
+
+client.on('qr', async (qr) => {
+  console.log('📱 QR generado. Abre la URL del servicio en tu navegador para escanearlo.');
   qrcode.generate(qr, { small: true });
+  try {
+    latestQrDataUrl = await QRCode.toDataURL(qr, { width: 400, margin: 2 });
+  } catch (e) {
+    console.error('Error generando QR imagen:', e.message);
+  }
 });
 
 client.on('ready', () => {
   console.log('✅ WhatsApp client is ready!');
+  whatsappReady = true;
+  latestQrDataUrl = null;
   startReminders();
 });
 
@@ -165,8 +176,30 @@ http.createServer((req, res) => {
     res.writeHead(200);
     res.end('OK');
   } else {
-    res.writeHead(404);
-    res.end('Not Found');
+    // Página principal: muestra el QR de WhatsApp o el estado
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    let body;
+    if (whatsappReady) {
+      body = `<div style="text-align:center;font-family:sans-serif;padding:40px">
+        <h1 style="color:#25D366">✅ WhatsApp conectado</h1>
+        <p>El sistema de recordatorios está activo.</p>
+      </div>`;
+    } else if (latestQrDataUrl) {
+      body = `<div style="text-align:center;font-family:sans-serif;padding:40px">
+        <h1>📱 Escanea con WhatsApp</h1>
+        <p>Configuración → Dispositivos vinculados → Vincular un dispositivo</p>
+        <img src="${latestQrDataUrl}" alt="QR" style="width:400px;max-width:90%"/>
+        <p style="color:#888">La página se refresca sola cada 20s</p>
+      </div>
+      <script>setTimeout(()=>location.reload(),20000)</script>`;
+    } else {
+      body = `<div style="text-align:center;font-family:sans-serif;padding:40px">
+        <h1>⏳ Iniciando...</h1>
+        <p>Generando código QR, espera unos segundos.</p>
+      </div>
+      <script>setTimeout(()=>location.reload(),5000)</script>`;
+    }
+    res.end(`<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nail Studio - WhatsApp</title></head><body>${body}</body></html>`);
   }
 }).listen(process.env.PORT || 3000);
 
